@@ -1,0 +1,32 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: app-nginx
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: app-nginx
+  name: app-nginx
+spec:
+  selector:
+    matchLabels:
+      Application: app-wildcard
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        Application: app-wildcard
+    spec:
+      tolerations:
+      - key: eks.amazonaws.com/compute-type
+        operator: Equal
+        value: fargate
+        effect: NoSchedule
+      containers:
+      - image: nginx:latest
+        imagePullPolicy: Always
+        name: app-nginx
+        ports:
+        - containerPort: 80
